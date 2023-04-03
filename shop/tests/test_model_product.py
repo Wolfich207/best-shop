@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from shop.models import Category, Product
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -15,7 +16,7 @@ class TestModelProduct(TestCase):
             description='Что-то очень интересное про телефон',
             picture=SimpleUploadedFile(
                 name='test_img.jpg',
-                content='',
+                content=b'',
                 content_type='image/jpg',
             ),
             url='phone',
@@ -35,9 +36,20 @@ class TestModelProduct(TestCase):
         self.assertFalse(self.product._meta.get_field('title').blank)
         self.assertFalse(self.product._meta.get_field('title').null)
         self.assertFalse(self.product._meta.get_field('title').unique)
+
         self.assertFalse(self.product._meta.get_field('url').blank)
         self.assertFalse(self.product._meta.get_field('url').null)
         self.assertTrue(self.product._meta.get_field('url').unique)
+
+        self.assertTrue(self.product._meta.get_field('description').blank)
+        self.assertFalse(self.product._meta.get_field('description').null)
+
+        self.assertFalse(self.product._meta.get_field('price').blank)
+        self.assertFalse(self.product._meta.get_field('price').null)
+
+        self.assertFalse(self.product._meta.get_field('category').blank)
+        self.assertFalse(self.product._meta.get_field('category').null)
+
 
     def test_str(self):
         self.assertEqual(str(self.product), 'Телефон')
@@ -47,3 +59,8 @@ class TestModelProduct(TestCase):
 
     def test_picture(self):
         self.assertIn('test_img', self.product.picture.name)
+
+    def test_negative_price(self):
+        with self.assertRaises(ValidationError):
+            self.product.price = -10
+            self.product.clean()

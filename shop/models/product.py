@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 
 from django.db.models import (
@@ -48,6 +49,10 @@ class Product(Model):
 
     def __str__(self):
         return f'{self.title}'
+
+    def clean(self):
+        if self.price < 0:
+            raise ValidationError('цена должна быть больше 0')
 
     def get_absolute_url(self):
         return reverse(
