@@ -50,7 +50,6 @@ class TestModelProduct(TestCase):
         self.assertFalse(self.product._meta.get_field('category').blank)
         self.assertFalse(self.product._meta.get_field('category').null)
 
-
     def test_str(self):
         self.assertEqual(str(self.product), 'Телефон')
 
