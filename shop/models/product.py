@@ -4,6 +4,7 @@ from django.db.models import (
     Model,
     PROTECT,
     CharField,
+    TextField,
     SlugField,
     ImageField,
     DecimalField,
@@ -20,9 +21,8 @@ class Product(Model):
         'название',
         max_length=200,
     )
-    description = CharField(
+    description = TextField(
         'описание',
-        max_length=700,
         blank=True,
     )
     picture = ImageField(
@@ -38,9 +38,9 @@ class Product(Model):
         'цена',
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(0, "цена должна быть не меньше 0")]
+        validators=[MinValueValidator(0, "цена должна быть больше 0")]
     )
-    category_for_products = ForeignKey(
+    category = ForeignKey(
         Category,
         verbose_name='категория',
         on_delete=PROTECT,
@@ -57,8 +57,7 @@ class Product(Model):
             }
         )
 
-
-class Meta:
-    verbose_name = 'товар'
-    verbose_name_plural = 'товары'
-    db_table = 'products'
+    class Meta:
+        verbose_name = 'товар'
+        verbose_name_plural = 'товары'
+        db_table = 'products'
